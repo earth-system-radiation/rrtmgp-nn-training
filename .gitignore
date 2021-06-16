@@ -1,0 +1,24 @@
+# Module files
+*.mod
+
+# Libraries
+*.a
+
+# Object files
+*.o
+
+# Intel vectorization reports
+*.optrpt
+
+# Don't commit specific Makefile variants
+Makefile.libs
+Makefile.conf
+
+# Intel code coverage
+*.dyn
+*.dpi
+*.spi
+*.spl
+*.HTML
+*.html
+*.gif
