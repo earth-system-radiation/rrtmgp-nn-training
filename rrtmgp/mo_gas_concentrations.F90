@@ -128,7 +128,7 @@ contains
     ! ---------
     error_msg = ''
     if (w < 0._wp .or. w > 1._wp) then
-      error_msg = 'ty_gas_concs%set_vmr(): concentrations should be >= 0, <= 1'
+      error_msg = 'ty_gas_concs%set_vmr(): trying to set ' // trim(gas) // ' but concentrations invalid, should be >= 0, <= 1'
       return
     endif
 
@@ -182,7 +182,7 @@ contains
 
     if (check_values) then
       if (any_vals_outside(w, 0._wp, 1._wp)) &
-        error_msg = 'ty_gas_concs%set_vmr: concentrations should be >= 0, <= 1'
+        error_msg = 'ty_gas_concs%set_vmr(): trying to set ' // trim(gas) // ' but concentrations invalid, should be >= 0, <= 1'
     end if
     if(this%nlay > 0) then
       if(size(w) /= this%nlay) error_msg = 'ty_gas_concs%set_vmr: different dimension (nlay)'
@@ -243,7 +243,7 @@ contains
 
     if (check_values) then
       if (any_vals_outside(w, 0._wp, 1._wp)) &
-        error_msg = 'ty_gas_concs%set_vmr: concentrations should be >= 0, <= 1'
+        error_msg = 'ty_gas_concs%set_vmr(): trying to set ' // trim(gas) // ' but concentrations invalid, should be >= 0, <= 1'
     end if
 
     if(this%ncol > 0 .and. size(w, 1) /= this%ncol) then
