@@ -1,7 +1,7 @@
 # ml-training-rrtmgp
 ML training example built on the RFMIP clear-sky program
 
-Idea is to have tools we can use to build NN emulators of RRTMGP k-distributions for given applications.
+Idea is to have streamlined tools we can use to build NN emulators of RRTMGP for a given k-distribution (specifying the number of g-points = number of NN outputs) for given applications.
 This requires (presumably lots of) training data consisting of RRTMGP inputs and outputs.
 
 Preliminary implementation: given some user-provided atmospheric profiles with T,p, and gas concentrations,
@@ -19,8 +19,7 @@ Three scripts located in `scripts_and_data/` (should the first two be combined?)
 - [x] `ml_generate_inputs.py`  tested with two source files in `rrtmgp_inp_outp/` (RFMIP data and extended CKDMIP "MMM" data), seems to work
 - [ ] `ml_generate_outputs.py` works and can call RFMIP programs 
 - [ ] Modify `mo_rfmip_io.F90` to be more flexible so that it will understand the new input files: load only those RRTMGP gases which are present in the file, which can have the "_GM" suffix or not, and have various shapes not previously supported ((site,layer)). I did something similar [in my NN fork](https://github.com/peterukk/rte-rrtmgp-nn/blob/nn_dev/examples/rfmip-clear-sky/mo_rfmip_io.F90#L70)  but I used column-last dimensions for gas concentrations so the code needs to be changed 
-- [ ] Modify `rrtmgp_rfmip_lw.F90` and `rrtmgp_rfmip_sw.F90` so that it will save the RRTMGP outputs to a netCDF file, could be the same as input file, or another file given as command line argument. In Ukkonen 2020 the NN outputs were absorption cross-section (LW/SW), rayleigh cross-section (SW), and Planck fraction (LW)...
-- ( [ ] Modify the RRTGMP Fortran interfaces and kernels so they save Planck fraction)
+- [ ] Modify `rrtmgp_rfmip_lw.F90`, `rrtmgp_rfmip_sw.F90` and potentially source code to save the RRTMGP outputs to a netCDF file (could be the same as input file, or another file given as command line argument). In Ukkonen 2020 the NN outputs were absorption cross-section (LW/SW), rayleigh cross-section (SW), and Planck fraction (LW). The first two could be computed within Python from regular RRTMGP optical properties but for saving Planck fraction, the RRTMGP interfaces/kernels need to changed
 - [ ] `ml_train_emulators.py` works and is reasonably flexible
 - [ ] Fortran Neural Network code to use the trained models! Part of this repo or another? Peter's previous code can be used but changes are needed to adapt to column-first structure of reference code
 
