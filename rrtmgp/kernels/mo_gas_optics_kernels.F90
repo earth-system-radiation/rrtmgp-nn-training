@@ -483,7 +483,8 @@ contains
                     fmajor, jeta, tropo, jtemp, jpress,    &
                     gpoint_bands, band_lims_gpt,           &
                     pfracin, temp_ref_min, totplnk_delta, totplnk, gpoint_flavor, &
-                    sfc_src, lay_src, lev_src_inc, lev_src_dec, sfc_source_Jac) bind(C, name="compute_Planck_source")
+                    sfc_src, lay_src, lev_src_inc, lev_src_dec, sfc_source_Jac,   &
+                    pfrac_inout) bind(C, name="compute_Planck_source")
     integer,                                    intent(in) :: ncol, nlay, nbnd, ngpt
     integer,                                    intent(in) :: nflav, neta, npres, ntemp, nPlanckTemp
     real(wp),    dimension(ncol,nlay  ),        intent(in) :: tlay
@@ -506,8 +507,11 @@ contains
     real(wp), dimension(ngpt,     ncol), intent(out) :: sfc_src
     real(wp), dimension(ngpt,nlay,ncol), intent(out) :: lay_src
     real(wp), dimension(ngpt,nlay,ncol), intent(out) :: lev_src_inc, lev_src_dec
-
     real(wp), dimension(ngpt,     ncol), intent(out) :: sfc_source_Jac
+
+    ! Optional output
+    real(wp), dimension(ngpt,nlay,ncol), optional,target,&
+                                        intent(inout) :: pfrac_inout
     ! -----------------
     ! local
     real(wp), parameter                             :: delta_Tsurf = 1.0_wp
@@ -515,10 +519,17 @@ contains
     integer  :: ilay, icol, igpt, ibnd, itropo, iflav
     integer  :: gptS, gptE
     real(wp), dimension(2), parameter :: one = [1._wp, 1._wp]
-    real(wp) :: pfrac          (ngpt,nlay,  ncol)
+    ! real(wp) :: pfrac          (ngpt,nlay,  ncol)
+    real(wp), dimension(:,:,:), allocatable, target :: pfrac_local
+    real(wp), dimension(:,:,:), pointer, contiguous :: pfrac
     real(wp) :: planck_function(nbnd,nlay+1,ncol)
     ! -----------------
-
+    if(present(pfrac_inout)) then 
+      pfrac => pfrac_inout
+    else 
+      allocate(pfrac_local(ngpt, nlay, ncol))
+      pfrac => pfrac_local
+    end if
     ! Calculation of fraction of band's Planck irradiance associated with each g-point
     do icol = 1, ncol
       do ilay = 1, nlay
